@@ -1,0 +1,12 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface StrCase where
+import Categ1(SyzygySolvableRing)
+import Matrix(Matrix)
+invSign :: Char -> Char
+matrInv :: SyzygySolvableRing a => [Char] -> Matrix a -> Matrix a
+mulSign :: Char -> Char -> Char
+strCase :: SyzygySolvableRing a => Matrix a -> Matrix a
+test_matrInv :: SyzygySolvableRing a => Matrix a -> [Char]
+test_toStairMatr :: SyzygySolvableRing a => Matrix a -> [Char]
+toStairMatr :: SyzygySolvableRing a => [Char] -> Matrix a -> Matrix a -> (Matrix a, Matrix a, Char)
+

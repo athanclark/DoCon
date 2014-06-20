@@ -1,0 +1,43 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface ExtPol where
+import Categ(AddSemigroup, Comp, Set)
+import Categ1(AddGroup, AddMonoid, CommutativeRing, Ring, SyzygySolvableRing)
+import PP(PP)
+import Pol(Pol)
+import UnvPol(Pol1)
+type EComp = (Integer, PP) -> (Integer, PP) -> Comp
+type EMon a = (a, EPP)
+data EPP   = EPP Integer PP ((Integer, PP) -> (Integer, PP) -> Comp)
+data EPol a   = EPol [(a, EPP)]
+data EVarPol a   = EVarP (EPol a) [[Char]]
+cEPolMul :: Ring a => a -> EPol a -> EPol a
+eMonMul :: Ring a => a -> (a, PP) -> (a, EPP) -> [(a, EPP)]
+ePolAdd :: CommutativeRing a => EPol a -> EPol a -> EPol a
+ePolCoefDiv :: Ring a => EPol a -> a -> [EPol a]
+ePolCoord :: EPol a -> Integer
+ePolCp :: EPol a -> (Integer, PP) -> (Integer, PP) -> Comp
+ePolDeg :: EPol a -> Integer
+ePolNeg :: AddGroup a => EPol a -> EPol a
+ePolPP :: EPol a -> PP
+ePolSub :: CommutativeRing a => EPol a -> EPol a -> EPol a
+ePolTimes :: Ring a => EPol a -> Integer -> EPol a
+ePolToPol1 :: CommutativeRing a => EPol a -> Pol1 (Pol a)
+ePolToVector :: CommutativeRing a => Integer -> EPol a -> [Pol a]
+lcE :: EPol a -> a
+lmE :: EPol a -> (a, EPP)
+lppE :: EPol a -> EPP
+mEPolMul :: Ring a => (a, PP) -> EPol a -> EPol a
+pol1ToEPol :: ((Integer, PP) -> (Integer, PP) -> Comp) -> Pol1 (Pol a) -> EPol a
+polEPolMul :: CommutativeRing a => Pol a -> EPol a -> EPol a
+sEPol :: SyzygySolvableRing a => EPol a -> EPol a -> [(EPol a, (a, PP), (a, PP))]
+vectorToEPol :: CommutativeRing a => ((Integer, PP) -> (Integer, PP) -> Comp) -> [Pol a] -> EPol a
+instance CommutativeRing a => AddSemigroup (EPol a)
+instance Ring a => Set (EPol a)
+instance CommutativeRing a => AddGroup (EPol a)
+instance CommutativeRing a => AddMonoid (EPol a)
+instance Eq EPP
+instance Eq a => Eq (EPol a)
+instance CommutativeRing a => Num (EPol a)
+instance Text EPP
+instance Text a => Text (EPol a)
+

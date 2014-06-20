@@ -1,0 +1,5 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface Main where
+import PreludeIO(Request, Response)
+main :: [Response] -> [Request]
+

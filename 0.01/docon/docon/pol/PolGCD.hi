@@ -1,0 +1,9 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface PolGCD where
+import Categ1(CommutativeRing, SyzygySolvableRing)
+import Pol(Pol)
+cont :: SyzygySolvableRing a => Pol a -> a
+liftPolCoef :: CommutativeRing a => Pol a -> Pol (Pol a)
+polGCD :: (SyzygySolvableRing a, Num a) => [Char] -> Pol a -> Pol a -> Pol a
+polPseudoRem :: (Num a, CommutativeRing a) => Pol a -> Pol a -> Pol a
+

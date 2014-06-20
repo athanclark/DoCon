@@ -1,0 +1,64 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface Categ1 where
+import Categ(AddSemigroup, DomCons, MulSemigroup, PropValue, Tree)
+import Matrix(Matrix)
+class (AddMonoid a) => AddGroup a
+class (AddSemigroup a) => AddMonoid a
+class (Ring a) => CommutativeRing a
+class (SyzygySolvableRing a) => Field a where
+	hasAbs :: a -> PropValue
+	real :: a -> PropValue
+class (CommutativeRing a) => ModuleOver a where
+	moduleTerm :: a -> ([Char], DomCons, [([Char], PropValue)], [[Char]], Tree [Char])
+	syzygySolvable_m :: a -> PropValue
+	hasGrBas_m :: a -> PropValue
+	moduloIsCanonic_m :: a -> PropValue
+	vec :: a -> a
+	cf :: a -> a
+	cMul :: a -> a -> a
+class (MulMonoid a) => MulGroup a
+class (MulSemigroup a) => MulMonoid a
+class (AddGroup a, OrdAddMonoid a) => OrdAddGroup a
+class (AddMonoid a) => OrdAddMonoid a
+class (AddGroup a, MulSemigroup a) => Ring a where
+	ringTerm :: a -> ([Char], DomCons, [([Char], PropValue)], [[Char]], Tree [Char])
+	field :: a -> PropValue
+	euclidean :: a -> PropValue
+	princIdeals :: a -> PropValue
+	factorial :: a -> PropValue
+	factorizeIsTotal :: a -> PropValue
+	hasNilp :: a -> PropValue
+	hasZeroDiv :: a -> PropValue
+	syzygySolvable :: a -> PropValue
+	hasGrBas :: a -> PropValue
+	moduloIsCanonic :: a -> PropValue
+	minNormRemValid :: a -> PropValue
+	char :: a -> [Integer]
+	i :: a -> Integer -> a
+	i_l :: a -> Integer -> [a]
+class (ModuleOver a) => SyzygySolvableModule a where
+	canAssoc_m :: a -> a
+	canInv_m :: a -> a
+	moduloBasis_m :: [Char] -> [a] -> a -> (a, [a])
+	grBasis_m :: [Char] -> [a] -> ([a], Matrix a)
+	syzygyBasis_m :: [Char] -> [a] -> [[a]]
+class (CommutativeRing a) => SyzygySolvableRing a where
+	syzygyBasis :: [Char] -> [a] -> [[a]]
+	moduloBasis :: [Char] -> [a] -> a -> (a, [a])
+	grBasis :: [Char] -> [a] -> ([a], Matrix a)
+	canAssoc :: a -> a
+	canInv :: a -> a
+	gcD :: [a] -> a
+	lcM :: [a] -> a
+	factorize :: a -> [(a, Integer)]
+	eucNorm :: a -> Integer
+	divRem :: [Char] -> a -> a -> [a]
+instance AddGroup a => AddGroup (Matrix a)
+instance AddGroup a => AddGroup [a]
+instance AddGroup a => AddMonoid (Matrix a)
+instance AddGroup a => AddMonoid [a]
+instance (CommutativeRing a, MulMonoid a) => MulMonoid (Matrix a)
+instance MulMonoid a => MulMonoid [a]
+instance CommutativeRing a => Ring (Matrix a)
+instance Ring a => Ring [a]
+

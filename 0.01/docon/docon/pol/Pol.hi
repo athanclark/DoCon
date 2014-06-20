@@ -1,0 +1,48 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface Pol where
+import Categ(AddSemigroup, Comp, MulSemigroup, Set)
+import Categ1(AddGroup, AddMonoid, CommutativeRing, MulMonoid, Ring, SyzygySolvableRing)
+import PP(PP)
+type Mon a = (a, PP)
+data Pol a   = Pol [(a, PP)]
+type VecPol a = (Pol a, [Pol a])
+cPolMul :: Ring a => a -> Pol a -> Pol a
+cToPol :: AddGroup a => a -> ([Integer] -> [Integer] -> Comp) -> a -> Pol a
+isZeroPol :: Pol a -> Bool
+lc :: Pol a -> a
+lm :: Pol a -> (a, PP)
+lpp :: Pol a -> PP
+mPolMul :: Ring a => (a, PP) -> Pol a -> Pol a
+mVecPolMul :: Ring a => (a, PP) -> (Pol a, [Pol a]) -> (Pol a, [Pol a])
+monLcm :: (SyzygySolvableRing a, Num a) => (a, PP) -> (a, PP) -> (a, PP)
+monMul :: Ring a => a -> (a, PP) -> (a, PP) -> [(a, PP)]
+numOfVars :: Pol a -> Integer
+polAdd :: CommutativeRing a => Pol a -> Pol a -> Pol a
+polCoefDiv :: Ring a => Pol a -> a -> [Pol a]
+polDivRem :: CommutativeRing a => Pol a -> Pol a -> (Pol a, Pol a)
+polMul :: CommutativeRing a => Pol a -> Pol a -> Pol a
+polNeg :: AddGroup a => Pol a -> Pol a
+polSub :: CommutativeRing a => Pol a -> Pol a -> Pol a
+polTail :: Pol a -> Pol a
+polTimes :: Ring a => Pol a -> Integer -> Pol a
+sPol :: SyzygySolvableRing a => Pol a -> Pol a -> (Pol a, (a, PP), (a, PP))
+sVecPol :: SyzygySolvableRing a => (Pol a, [Pol a]) -> (Pol a, [Pol a]) -> ((Pol a, [Pol a]), (a, PP), (a, PP))
+showsPol :: Ring a => [[Char]] -> Pol a -> [Char] -> [Char]
+toPairOfPol :: (AddMonoid a, AddMonoid b) => Pol (a, b) -> (Pol a, Pol b)
+totalDeg :: Pol a -> Integer
+vecPolAdd :: (CommutativeRing a, CommutativeRing b) => (Pol a, [Pol b]) -> (Pol a, [Pol b]) -> (Pol a, [Pol b])
+vecPolSub :: (CommutativeRing a, CommutativeRing b) => (Pol a, [Pol b]) -> (Pol a, [Pol b]) -> (Pol a, [Pol b])
+instance CommutativeRing a => AddSemigroup (Pol a)
+instance CommutativeRing a => MulSemigroup (Pol a)
+instance CommutativeRing a => Set (Pol a)
+instance CommutativeRing a => AddGroup (Pol a)
+instance CommutativeRing a => AddMonoid (Pol a)
+instance CommutativeRing a => CommutativeRing (Pol a)
+instance (CommutativeRing a, MulMonoid a) => MulMonoid (Pol a)
+instance CommutativeRing a => Ring (Pol a)
+instance (SyzygySolvableRing a, Num a) => SyzygySolvableRing (Pol a)
+instance Eq a => Eq (Pol a)
+instance CommutativeRing a => Fractional (Pol a)
+instance CommutativeRing a => Num (Pol a)
+instance Text a => Text (Pol a)
+

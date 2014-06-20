@@ -1,0 +1,21 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface Generic where
+import Categ(Set)
+import Categ1(Field, OrdAddGroup, SyzygySolvableRing)
+contigFnRootAppr :: (Field a, OrdAddGroup a, Fractional a) => (a -> a) -> a -> a -> a -> a
+copy :: Integer -> a -> [a]
+del_n_th :: Integer -> [a] -> [a]
+eucGCDE :: (SyzygySolvableRing a, Num a) => a -> a -> (a, a, a)
+firstIntDivisor :: Integral a => a -> a
+gcdL :: SyzygySolvableRing a => (a -> a -> a) -> [a] -> a
+gcd_test :: (Num a, SyzygySolvableRing a) => a -> a -> a -> [Char]
+genProduct :: Num a => [a] -> a
+genSum :: Num a => [a] -> a
+isPrimeInt :: Integral a => a -> Bool
+mergeP :: (a -> a -> Bool) -> [a] -> [a] -> [a]
+multiplicity :: (SyzygySolvableRing a, Num a) => a -> a -> (Integer, a)
+primes :: [Integer]
+r :: Set a => a -> [Char] -> a
+sieve :: Integral a => [a] -> [a]
+sortP :: (a -> a -> Bool) -> [a] -> [a]
+

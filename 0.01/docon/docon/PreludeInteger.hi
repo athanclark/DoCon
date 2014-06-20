@@ -1,0 +1,134 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface PreludeInteger where
+import Categ(AddSemigroup(..), Comp, DomCons, MulSemigroup(..), PropValue, Set(..), Tree)
+import Categ1(AddGroup(..), AddMonoid(..), CommutativeRing(..), MulMonoid(..), OrdAddGroup(..), OrdAddMonoid(..), Ring(..), SyzygySolvableRing(..))
+import IParse(Expression)
+import Matrix(Matrix)
+import PreludeRatio(Ratio(..))
+class (Set a) => AddSemigroup a where
+	addSmgTerm :: a -> ([Char], DomCons, [([Char], PropValue)], [[Char]], Tree [Char])
+	cyclicAdd :: a -> PropValue
+	groupAdd :: a -> PropValue
+	ordAdd :: a -> PropValue
+	add :: a -> a -> a
+	zero :: a -> a
+	zero_l :: a -> [a]
+	neg :: a -> a
+	neg_l :: a -> [a]
+	sub :: a -> a -> a
+	sub_l :: a -> a -> [a]
+	times :: a -> Integer -> a
+	times_l :: a -> Integer -> [a]
+	compare :: a -> a -> Comp
+	absV :: a -> a
+class (Set a) => MulSemigroup a where
+	mulSmgTerm :: a -> ([Char], DomCons, [([Char], PropValue)], [[Char]], Tree [Char])
+	commutative :: a -> PropValue
+	cyclicMul :: a -> PropValue
+	groupMul :: a -> PropValue
+	mul :: a -> a -> a
+	unity :: a -> a
+	unity_l :: a -> [a]
+	inv :: a -> a
+	inv_l :: a -> [a]
+	divide :: a -> a -> a
+	divide_l :: a -> a -> [a]
+	power :: a -> Integer -> a
+	power_l :: a -> Integer -> [a]
+	rootN :: [Char] -> a -> Integer -> [a]
+class (Eq a, Text a) => Set a where
+	setTerm :: a -> ([Char], DomCons, [([Char], PropValue)], [[Char]], Tree [Char])
+	card :: a -> [[Integer]]
+	w :: a -> [Char] -> [Char]
+	fromExpr :: a -> Expression [Char] -> ([a], [Char])
+class (AddMonoid a) => AddGroup a
+class (AddSemigroup a) => AddMonoid a
+class (Ring a) => CommutativeRing a
+class (MulSemigroup a) => MulMonoid a
+class (AddGroup a, OrdAddMonoid a) => OrdAddGroup a
+class (AddMonoid a) => OrdAddMonoid a
+class (AddGroup a, MulSemigroup a) => Ring a where
+	ringTerm :: a -> ([Char], DomCons, [([Char], PropValue)], [[Char]], Tree [Char])
+	field :: a -> PropValue
+	euclidean :: a -> PropValue
+	princIdeals :: a -> PropValue
+	factorial :: a -> PropValue
+	factorizeIsTotal :: a -> PropValue
+	hasNilp :: a -> PropValue
+	hasZeroDiv :: a -> PropValue
+	syzygySolvable :: a -> PropValue
+	hasGrBas :: a -> PropValue
+	moduloIsCanonic :: a -> PropValue
+	minNormRemValid :: a -> PropValue
+	char :: a -> [Integer]
+	i :: a -> Integer -> a
+	i_l :: a -> Integer -> [a]
+class (CommutativeRing a) => SyzygySolvableRing a where
+	syzygyBasis :: [Char] -> [a] -> [[a]]
+	moduloBasis :: [Char] -> [a] -> a -> (a, [a])
+	grBasis :: [Char] -> [a] -> ([a], Matrix a)
+	canAssoc :: a -> a
+	canInv :: a -> a
+	gcD :: [a] -> a
+	lcM :: [a] -> a
+	factorize :: a -> [(a, Integer)]
+	eucNorm :: a -> Integer
+	divRem :: [Char] -> a -> a -> [a]
+class (Num a) => Fractional a where
+	(/) :: a -> a -> a
+	recip :: a -> a
+	fromRational :: Ratio Integer -> a
+data ModOverInt a 
+instance AddSemigroup Integer
+instance AddGroup a => AddSemigroup (Matrix a)
+instance AddGroup a => AddSemigroup (ModOverInt a)
+instance (Integral a, SyzygySolvableRing a) => AddSemigroup (Ratio a)
+instance AddGroup a => AddSemigroup [a]
+instance MulSemigroup Integer
+instance CommutativeRing a => MulSemigroup (Matrix a)
+instance AddGroup a => MulSemigroup (ModOverInt a)
+instance (Integral a, SyzygySolvableRing a) => MulSemigroup (Ratio a)
+instance MulSemigroup a => MulSemigroup [a]
+instance Set Comp
+instance Set PropValue
+instance Set Char
+instance Set Integer
+instance Set a => Set (Matrix a)
+instance Set a => Set (ModOverInt a)
+instance (Integral a, SyzygySolvableRing a) => Set (Ratio a)
+instance Set a => Set [a]
+instance AddGroup Integer
+instance AddGroup a => AddGroup (Matrix a)
+instance AddGroup a => AddGroup (ModOverInt a)
+instance (Integral a, SyzygySolvableRing a) => AddGroup (Ratio a)
+instance AddGroup a => AddGroup [a]
+instance AddMonoid Integer
+instance AddGroup a => AddMonoid (Matrix a)
+instance AddGroup a => AddMonoid (ModOverInt a)
+instance (Integral a, SyzygySolvableRing a) => AddMonoid (Ratio a)
+instance AddGroup a => AddMonoid [a]
+instance CommutativeRing Integer
+instance AddGroup a => CommutativeRing (ModOverInt a)
+instance (Integral a, SyzygySolvableRing a) => CommutativeRing (Ratio a)
+instance CommutativeRing a => CommutativeRing [a]
+instance MulMonoid Integer
+instance (CommutativeRing a, MulMonoid a) => MulMonoid (Matrix a)
+instance (Integral a, SyzygySolvableRing a) => MulMonoid (Ratio a)
+instance MulMonoid a => MulMonoid [a]
+instance OrdAddGroup Integer
+instance (Integral a, SyzygySolvableRing a, OrdAddMonoid a) => OrdAddGroup (Ratio a)
+instance OrdAddMonoid Integer
+instance (Integral a, SyzygySolvableRing a, OrdAddMonoid a) => OrdAddMonoid (Ratio a)
+instance Ring Integer
+instance CommutativeRing a => Ring (Matrix a)
+instance AddGroup a => Ring (ModOverInt a)
+instance (Integral a, SyzygySolvableRing a) => Ring (Ratio a)
+instance Ring a => Ring [a]
+instance SyzygySolvableRing Integer
+instance (Integral a, SyzygySolvableRing a) => SyzygySolvableRing (Ratio a)
+instance SyzygySolvableRing a => SyzygySolvableRing [a]
+instance Eq a => Eq (ModOverInt a)
+instance Fractional Integer
+instance AddGroup a => Num (ModOverInt a)
+instance Text a => Text (ModOverInt a)
+

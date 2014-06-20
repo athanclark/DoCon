@@ -1,0 +1,8 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface Det where
+import Categ1(SyzygySolvableRing)
+import Matrix(Matrix)
+delColumn :: Integer -> [[a]] -> [[a]]
+det :: (SyzygySolvableRing a, Num a) => [Char] -> Matrix a -> a
+minor :: Integer -> Integer -> Matrix a -> Matrix a
+

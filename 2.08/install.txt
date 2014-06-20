@@ -1,0 +1,227 @@
+                Installing  DoCon-2.08 system
+                -----------------------------
+
+                with GHC tool, on Linux, Unix.                 
+
+
+------------------------------------------------------------------
+The remarks are welcome:     Serge Mechveliani  <mechvel@botik.ru>
+------------------------------------------------------------------
+
+See first  announce.txt, license.txt.
+
+DoCon-2.08  distributes as the archive of the Haskell source 
+programs and documentation. 
+It was tested under the Haskell implementation  GHC-6.2.2.
+
+WARNING:  usually, each DoCon version works (literally as it is)
+          only under a single GHC version.
+On the other hand, it is easy to port to other GHC versions.
+We think it can be ported (with some effort) to Hugs or other 
+Haskell systems.
+
+Memory needed to build DoCon under GHC-6.2.2
+by a single `make' command:               -Onot  requires  30M byte,
+                                          -O               60M. 
+
+Code size:  DoCon object library libHSdocon.a `made' under 
+                                              -Onot  is about  7 Mb,
+                                              -O     is about 10 Mb.
+
+Memory needed to build the test  T_  under GHC-6.2.2
+by a single  (ghc ... --make T_) command                    = 18 Mb.
+
+Memory needed to load (to  ghci)  DoCon (compiled with -O) 
+and the compiled (with -Onot) test  T_  and perform it
+under GHC-6.2.2                                             = 14 Mb.
+ 
+
+
+
+
+** Installing procedure  *******************************************
+
+1. Download files
+
+The DoCon distribution directory contains
+            announce.txt
+            license.txt
+            install.txt      - the file you are reading now
+            docon-2.08.zip   - the very DoCon program, documentation
+
+Download these files.
+
+--------------------------------------------------------------------
+2. Unfold
+
+Change to the directory where you wish too keep all the  DoCon 
+files - let us call it <D>.
+Say, on my machine, <D> is /home/mechvel/docon/2.08
+Move  docon-2.08.zip  to  <D>/  and command 
+                                      cd <D>;  unzip docon-2.08.zip
+
+After this, you will have the following directories and files:
+        
+<D>/announce.txt
+    license.txt
+    install.txt    
+    docon/manual.ps              -- manual in postscript format
+      .../source/Makefile ...    -- directory tree 
+             .../docon.conf      --   with source 
+                ...              --   program
+
+--------------------------------------------------------------------
+3. Set the three paths in Makefile 
+
+  cd <D>/docon/source;  
+  edit in  Makefile  the lines   ghcBinDir = 
+                                 s         = ...
+                                 e         = ...
+
+CAUTION:  do not add blanks to the end of the latter two lines
+          (otherwise, the commands like  rm -rf $(..)... 
+           may try to intrude into wrong directories).
+
+Here  $(ghcBinDir)  is a directory where the  ghc  executable 
+                    resides, for example,      .../ghc/.../inst/bin
+                    ,
+      $(s) = <D>/docon/source,
+      $(e) is the directory where DoCon libraries and interface will
+           install to.
+
+The paths to the  ghc, ghc-pkg  executables are computed 
+automatically via  $(ghcBinDir).
+If you need to apply another  ghc-pkg,  you may set in the command 
+line  `make ... ghcpkg=...'
+
+Introducing  $(ghcBinDir)  has sense because there may occur several 
+GHC installations on one machine.
+
+Further we use the names $(s), $(e).
+
+And we recommend to start with making DoCon under -Onot and testing
+as below.
+
+--------------------------------------------------------------------
+4. Make non-optimized DoCon
+
+                 cd $(s)
+                 make space=-Mxxm docon >& log
+                            
+- set appropriate number for  xx  to give sufficient memory space
+for the compilation. For example,  xx = 90  means 90M bytes.
+
+This command
+ * creates the installation directory $(e),
+ * compiles all DoCon modules without optimization,
+   putting the result .hi .o files and libraries to the directory  
+   $(e)/,
+ * creates a GHC user package      docon 
+   with configuration in the file  ./docon.conf
+   , this package refers to the libraries and .hi interfaces in 
+   $(e), 
+ * prints the report to the file  ./log  
+
+./log  may contain numerous messages, and they are all good - 
+except  "compilation had errors".
+
+
+Then, if needed, the command  
+
+  make clear       undoes the whole installation,
+  make clearO      removes  $(e)/*.o  files - except  HSdocon.o
+                   (these files still can be extracted then by  
+                    ar -x libDocon.a
+                   ).
+All the DoCon facilities and many of GHC items are visible now from 
+the module  DExport.
+
+--------------------------------------------------------------------
+5. Making and running test-demonstration
+
+We recommend first to set the variables for the package 
+configuration option:
+        setenv doconc    "..../2.08/docon/source/docon.conf"
+        setenv pcdocon   "-package-conf ${doconc}"
+        setenv pcpdocon  "${pcdocon} -package docon"
+
+in order make possible brief commands like say
+                            ghc-pkg -f $doconc;   ghci $pcpdocon ...
+Then, apply
+              cd $(s)/demotest
+(a)           ghc $pcpdocon --make T_  +RTS -Mxxm -RTS
+
+- with sufficient xx to compile the demonstration & test programs.
+Note, that  docon package  invokes many  options  for   ghc  command
+(see Makefile).
+To load and run the full demonstration & test, command now
+                                              
+(b)          ghci $pcpdocon T_ +RTS -Mxxm -RTS
+             ...
+             T_> :set +s
+             T_> test "log"
+
+setting sufficiently large  xx. 
+It also copies the protocol to the file  ./log.
+The user may also run separately any part of DoCon test-demo 
+program. For example, 
+             ghci $pcpdocon  T_permut  +RTS -Mxxm -RTS
+             ...
+             T_permut_> :m DExport
+             DExport> fst $ T_permut.t_permut_ 7
+             [True,True]
+             (0.68 secs, 158260024 bytes)
+             DExport>
+
+You could also skip the test compilation (a) and run the 
+interpreted demonstration & test  (b).
+But the loaded program code in this case may take a couple of times
+more of the memory (probably, due to the interface module treating 
+by the interpreter).
+
+Running test as stand-alone executable: 
+---------------------------------------
+The commands
+                cd $(s)/demotest
+                ghc $pcpdocon --make Main  +RTS -M..m -RTS         
+
+create the executable file    ./a.out  
+, 
+which is run by the command   ./a.out 
+    
+
+--------------------------------------------------------------------
+6. Making optimized DoCon
+    
+`Making' DoCon under  -Onot  gives quite a fast code.
+But if you still need 2-3 times speed up 
+(with about 1/10 larger code), 
+then, after all the above is tested, build the optimized DoCon by
+
+            cd $(s)
+            make clear
+            make space=-Mxxm extraHCOpts=-O  docon >& log  
+
+setting sufficiently large  xx.
+This takes more time than  -Onot.
+Then, act as in the previous Sections 4, 5.
+As to the modules                            $(S)/demotest/*,
+
+we recommend to compile them with  -Onot,
+for -O would not speed up them any essentially.
+
+--------------------------------------------------------------------
+7. Further work 
+
+Choose some directory aside from DoCon, create your project there 
+and compile (or/and interpret under ghci) your programs calling 
+ghc, ghci  with the  $pcpdocon  option.
+
+Before proceeding further, read the current remarks in the file
+
+                 .../docon/notes/2.08* 
+
+residing on the site near the DoCon distribution directory.
+Also consult it concerning any unlucky cases.
+And there exists the manual   
+                            <D>/docon/manual.ps

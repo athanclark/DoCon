@@ -1,0 +1,124 @@
+-- Example of symmetric function transformation 
+-- Finding discriminant polynomial.
+-- (see Manual).
+--
+-- Problem:
+-- for the polynomial scheme  f = x^n + c_1 x^{n-1} + c_2 x^{n-2} + c_n,
+---
+-- derive the algebraic condition on  c_i  for  f  to have a multiple
+-- root.
+-- Usually, the algebra guides solve this task as follows.
+-- The searched condition expresses as
+-- 0 = d(x_1 ... x_n) = (product {1 <= i < j <= n} (x_i - x_j)) ^ 2,
+--
+-- where  x_i  denote the roots of  f  in some extension field.
+-- d <- Z[x_1 ... x_n]  is symmetric, hence it decomposes as  
+-- d = h(e_1 ... ),   h <- Z[e_1 ...],   e_i the elementary symmetrics.
+-- And  e_i = c_i  or  -c_i  -- because of the Viete's formula for 
+-- c_i(x_1 ... x_n).  Hence, decomposing  d  to  h(e_1 ...)  by 
+-- to_e_pol  gives the needed coefficients of the discriminant 
+-- polynomial.
+-- The program is as follows.
+-- 
+-- n  is given.  d = discr(n) = d(x_1 ... x_n)  computes as the element 
+-- of  Z[x_1 ... x_n],  converts to the sym-pol form  discrS  and 
+-- decomposes to  h <- Z[e_1 ...  e_w]  in elementary symmetrics by 
+-- to_e_pol.  The result is  (discrS, h).
+
+------------------------------------------------------------------------
+import qualified Data.Map as Map (empty)
+import DPrelude  (product1)
+import SetGroup  (sub)
+import Z         (dZ)
+import Pol       (PolLike(..), Pol(..),  lexPPO, cToPol)
+import Partition (pLexComp)
+import AlgSymmF  (SymPol(..), SymmDecMessageMode(..), SymmDecBasisId,  
+                  toSymPol, to_e_pol
+                 )
+
+discrimToE :: SymmDecBasisId -> Integer -> (SymPol Integer, Pol Integer)
+discrimToE    basisId           n       =
+
+  let pcp  = pLexComp
+      vars = map (('x':) . show) [1..n]      -- ["x1"..."x<n>"]
+      o    = lexPPO n
+      unP  = cToPol o vars dZ 1              -- 1 of P = Z[x1...xn]
+      listDiscr fs = (product1 $ diffs fs)^2
+                           where
+                           diffs [_]    = []
+                           diffs (f:fs) = (map (sub f) fs) ++ (diffs fs)
+                          --
+                          -- example: [a,b,c] -> (a-b)^2*(a-c)^2*(b-c)^2
+
+      xPols       = varPs 1 unP         -- x_i  as polynomials
+      discr       = listDiscr xPols
+      Just discrS = toSymPol pcp discr
+      w           = deg discrS
+      messageMode = NoSymmDecMessages 
+  in
+  (discrS, 
+   snd $ to_e_pol messageMode basisId Map.empty (lexPPO w) discrS
+  )
+
+
+main = let n            = 5                       -- edit this
+           basisId     = "mn"                     -- alternative: "m"
+           (discrS, h) =  discrimToE basisId n
+       in
+       putStr $ concat ["discrS =\n", shows discrS "\n\n",
+                        "h =\n",      shows h "\n"
+                       ]
+       
+
+
+
+
+
+{- Results -------------------------------------------------------------
+
+
+n = 2.  discrS = (SymPol [(1, [(2,1)]), (-2, [(1,2)])] _ _ _)
+                                             -- does not depend on  vars
+h = e1^2 - 4*e2           
+----------------------------------------------------------------------
+n = 3.  discrS = SymPol [(1, [(4,1),(2,1)]), (-2, [(4,1),(1,2)] ),
+                         (-2,[(3,2)]),      (2, [(3,1),(2,1),(1,1)]),
+                         (-6,[(2,3)])
+                        ] _ _ _
+
+h = -4*e1^3*e3 + e1^2*e2^2 - 8*e1^2*e4 + 18*e1*e2*e3 - 4*e2^3
+        + 24*e2*e4 - 27*e3^2
+--------------------------------------------------------------------
+n = 4.  discrS = SymPol [(1,  [(6,1),(4,1),(2,1)]),
+                         (-2, [(6,1),(4,1),(1,2)]) ... (24, [(3,4)])
+                        ] _ _ _
+
+h = 24*e1^4*e3*e5 - 27*e1^4*e4^2 - 8*e1^3*e2^2*e5 +
+    ...
+    + 200*e2*e5^2 - 27*e3^4 + 216*e3^2*e6 - 480*e3*e4*e5 + 256*e4^3
+  
+----------------------------------------------------------
+n = 5.  
+discrS = 
+(SymPol 1*[8,6,4,2] -2*[8,6,4,1*2] -2*[8,6,3*2] 2*[8,6,3,2,1] 
+  -6*[8,6,2*3] -2*[8,5*2,2] 4*[8,5*2,1*2] 2*[8,5,4,3] -2*[8,5,4,2,1] 
+  ...
+  -12*[5*3,3,2] 12*[5*2,4*2,2] 12*[5*2,4,3*2] -24*[5,4*3,3] 120*[4*5]  
+)
+
+h = -192*e1^5*e3*e5*e7 + 200*e1^5*e3*e6^2 + 216*e1^5*e4^2*e7 - 
+    480*e1^5*e4*e5*e6 + 256*e1^5*e5^3 + 72*e1^4*e2^2*e5*e7 - 
+    75*e1^4*e2^2*e6^2 - 168*e1^4*e2*e3*e4*e7 ...
+    ...
+    + 5600*e4^2*e5*e7 + 2880*e4^2*e6^2 - 9000*e4*e5^2*e6 + 3125*e5^4
+
+-- Timing ---------------------------------------------------------
+
+June 13, 2007.  ghc-6.6.1,  DoCon-2.09 compiled under -O,
+Debian Linux,
+Processor: Intel Pentium(R) 4,  stepping 4,  1.6 GHz,  cache 512 KB.
+ 
+n = 4.  "m"     0.4 sec  for -M90m,     "mn":  0.2 sec. 
+n = 5.  "m"   254   sec  for -M90m,     "mn": 49   sec.
+
+-}

@@ -1,0 +1,27 @@
+{-# GHC_PRAGMA INTERFACE VERSION 4 #-}
+interface CyclRoot where
+import Pol(Pol)
+import PreludeRatio(Ratio(..))
+import VarPol(VarPol)
+type A = VarPol (Ratio Integer)
+type K = Ratio Integer
+basis :: [VarPol (Ratio Integer)]
+f1 :: VarPol (Ratio Integer)
+f2 :: VarPol (Ratio Integer)
+f3 :: VarPol (Ratio Integer)
+f4 :: VarPol (Ratio Integer)
+f5 :: VarPol (Ratio Integer)
+gb :: [VarPol (Ratio Integer)]
+rtUn :: Ratio Integer
+rtZero :: Ratio Integer
+u :: VarPol (Ratio Integer)
+un :: VarPol (Ratio Integer)
+unp :: Pol (Ratio Integer)
+v :: VarPol (Ratio Integer)
+vars4 :: [[Char]]
+vars5 :: [[Char]]
+vars6 :: [[Char]]
+x :: VarPol (Ratio Integer)
+y :: VarPol (Ratio Integer)
+z :: VarPol (Ratio Integer)
+

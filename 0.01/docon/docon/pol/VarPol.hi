@@ -1,0 +1,28 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface VarPol where
+import Categ(AddSemigroup, MulSemigroup, Set)
+import Categ1(AddGroup, AddMonoid, CommutativeRing, MulMonoid, Ring, SyzygySolvableRing)
+import PP(PP)
+import Pol(Pol)
+data VarPol a   = VarP (Pol a) [[Char]]
+fromVarP :: VarPol a -> Pol a
+lcV :: VarPol a -> a
+lmV :: VarPol a -> (a, PP)
+lppV :: VarPol a -> [Integer]
+toVarP :: [[Char]] -> Pol a -> VarPol a
+varToVarPol :: VarPol a -> [Char] -> VarPol a
+varpEmp :: [[Char]] -> [Pol a] -> [VarPol a]
+instance CommutativeRing a => AddSemigroup (VarPol a)
+instance CommutativeRing a => MulSemigroup (VarPol a)
+instance CommutativeRing a => Set (VarPol a)
+instance CommutativeRing a => AddGroup (VarPol a)
+instance CommutativeRing a => AddMonoid (VarPol a)
+instance CommutativeRing a => CommutativeRing (VarPol a)
+instance CommutativeRing a => MulMonoid (VarPol a)
+instance CommutativeRing a => Ring (VarPol a)
+instance (SyzygySolvableRing a, Num a) => SyzygySolvableRing (VarPol a)
+instance Eq a => Eq (VarPol a)
+instance CommutativeRing a => Fractional (VarPol a)
+instance CommutativeRing a => Num (VarPol a)
+instance Text a => Text (VarPol a)
+

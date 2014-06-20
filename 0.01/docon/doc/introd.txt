@@ -1,0 +1,650 @@
+------------------------------------------------------------------
+------------------------------------------------------------------
+-- The Algebraic Domain Constructor  DoCon,   version 0.01
+
+-- Copyright  Sergey D.Mechveliani,  1993-1995             
+------------------------------------------------------------------
+------------------------------------------------------------------
+
+
+meshvel@botik.ru
+
+
+
+
+
+T H E   M A N U A L
+
+
+
+
+
+
+                    1. Introduction
+
+1.1. History
+
+It is quite evident, that the modern computer algebra system
+should base on the categorial approach to algebraic computation.
+This approach was developed in AXIOM (*a) project [1].
+
+
+----------------------------------------------------------------
+Footer:  
+(*a)  AXIOM   is a trademark of the Numerical Algorithms Group Ltd.
+(*m)  MIRANDA is a trademark of     Research Software Ltd.
+----------------------------------------------------------------
+
+
+Independently, similar work (but in small variant) was undertaken
+in 1990 in Program Systems Institute, Pereslavl-Zalessky. It had
+resulted in the CAC program - Commutative Algebra Constructor [2].
+This program was written in the typeless functional language.
+
+Now the DoCon program had started (Domain Constructor), which is 
+the development of CAC.
+The choice of the programming tool is essential here.  We choose 
+now the Haskell language [3]. 
+
+
+1.2. Programming language
+
+Haskell is a language of MIRANDA (*m) family [4]. 
+Among its features we point out that it
+
+1. is pure functional (unlike AXIOM),
+2. supports pattern matching,  high order functions,
+   has lambda-calculus as its kernel language.
+3. is strongly typed,
+4. has types classes (that resemble somehow to the abstract data
+   types),
+5. has a "lazy" computational model (unlike AXIOM).
+   Also in in its later release, Haskell provides also the 
+   construction for setting the strictness instructions.
+
+Haskell compilers are distributed freely, Haskell is designed as
+a comprehensive tool for scientific programming, and it is also
+a language for the scientific publications.
+
+The DoCon project has similar goals, and DoCon is designed and 
+distributed on the similar open-free basis. 
+
+There are several implementations of the Haskell language.
+So far, we are working with the Glasgow Haskell Compiler ghc.
+The files of this compiler and the related materials are available 
+freely by ftp from 
+           ftp.dcs.glasgow.ac.uk:  /pub/haskell/glasgow
+
+Thus DoCon is an program package written in Haskell, and the user
+of DoCon should set his algorithms in Haskell, using the DoCon
+classes, class instances, types and functions (and adding the user
+ones if needed).
+
+In old days, no effective implementations for "lazy" languages were 
+known. Recently, a significant progress has been achieved due to 
+implementing of so-called graph reduction model of computation.
+
+Also many people consider the pure functionality as impractical,
+saying that there is always a necessity to update a list or array 
+"in place".
+
+But the functionality has its pluses, say, in more easy 
+paralleliization, more readability.
+In "lazy" language, the shortest program is often as affective
+as the optimized one in the strict language.  This brings more 
+clarity to the programs.
+For example, if we had programmed  quickSort,  then the script
+
+min = head.quickSort
+
+is quite a good expression for the minimum function  (but not for
+the strict model).
+
+Another example. 
+The DoCon function for the staircase form of matrix returns 
+                         (s,t,sign),  
+
+where  s     it  the staircase matrix,  
+       t     the protocol matrix, 
+       sign  is the transposition sign for the rows.
+
+If the program does not use further  t, sign,  then the whole
+corresponding subtree of computation would never be performed at 
+the run time. Thus no special cases should be programmed for this 
+function. Many other functions are similar.
+
+Thus we bring more clarity to programs.
+
+
+However, the main consideration is that in the functional 
+programming, the program - as it is in the kernel language - is 
+actually an explicite expression (compare it with the polynomial in 
+mathematics) which is transformed step by step to the result 
+expression. 
+This provides a large field for the automatic symbolic optimization 
+of the programs, and many researches are performed on the subject
+of such global optimizations.
+
+So far, no large computer algebra programs are known, that are 
+written pure functionally in a language like Haskell. 
+So DoCon starts an experiment.
+
+
+
+
+                   1.2. Current results 
+
+
+* The algebraic category hierarchy was formulated in terms of the 
+  type classes.
+
+* Certain instances of above categories were set for the basic 
+  domain Integer.
+
+* The domain constructors  List, Matrix, Fraction, Polynomial
+  were implemented,  each as a set of instances of the category
+  hierarchy.
+
+* Were implemented the functions of
+  * matrix arithmetics, reduction to the staircase form over a
+    Euclidean domain,
+  * polynomial arithmetics for R[x1,...,xn],  R a commutative 
+    ring,
+  * arithmtics of the fraction field (Fraction a) for any 
+    factorial ring  a.
+
+Currently, we undertake a revision (relatively to old CAC program)
+of the Groebner bases method design trying to implement the known
+Moeller's method - for the case of Euclidean coefficient domain.
+
+
+
+                  1.3. Future intentions
+
+
+* To complete the linear algebra design.
+* To tune the Groebner bases algorithm.
+* To port the polynomial GCD from CAC - for R[x1,...,xn],
+  R a factorial ring.
+* To port (re-design) the quotient ring constructor.
+* To port the decomposition to elementary symmetric polynomials.
+* To develop the processing of the certain set of the domain 
+  properties. 
+* To implement some part of the polynomial factorization.
+* To start impelementing the methods for non-commutative algebra,
+  Lie algebras.
+
+
+
+
+             1.4. General remarks on the project
+
+
+The current results of the project are given by the source scripts
+- see APPENDIX. 
+Here are the remarks that may serve as an introduction to these
+scripts.
+ 
+
+1.4.1. Mathematical methods
+
+From the mathematical point of view, the methods used in DoCon 
+are taken from the classical books, from the journals like
+"Symbolic Computation", from the papers, the conference
+proceedings like ISSAC, etc.
+
+
+
+1.4.2. Category hierarchy and Haskell classes.
+
+
+Currently, DoCon deals with the algebraic categories that form 
+the following tower of extensions:
+
+
+                      Set
+                   /       \
+                 /           \
+      AddSemigroup            MulSemigroup
+              /                 /   \
+            /                 /       \
+    AddMonoid               /         MulMonoid
+         /                /
+       /                /
+  AddGroup            /
+        \           /
+          \       / 
+             Ring   
+              |
+             CommutativeRing
+              |
+             SyzygySolvableRing
+
+
+The programmer may freely develop this graph further.
+
+Most of the DoCon methods are devoted to the SyzygySolvable class 
+of domains.
+
+ 
+
+An  algebraic domain  corresponds to Haskell  type.
+
+A   category          corresponds to Haskell  class.
+
+A  domain costructor 
+   (like "polynomial", "matrix", fraction ring, quotient ring,
+    etc.)
+   corresponds to a Haskell  type constructor
+   (respectively:  Pol, Matrix, Fraction, Residue, etc.).
+
+
+The above hierarchy is expressed naturally in Haskell by the
+following scripts.
+
+---------------------------------------------------------------
+class  (Eq a, Text a) =>  Set a  where    
+
+  cardinality  :: [Integer]
+  writeElement :: a -> String
+  readElement  :: String -> a
+--------------------------------------------------------------
+
+This means that any  domain (type)  that belong to the pre-defined
+Haskell classes Eq, Text  (i.e. supplied with the operations of
+equality `==' and the Text ones) and supplied with the operations
+called  cardinality, writeElement, readElement  having the above
+formats - is considered to belong to the Set category (class).
+
+Further,
+
+---------------------------------------------------------------
+class  Set a =>  AddMonoid a   where    
+
+  zero  :: a
+  add   :: a -> a -> a
+  times :: a -> Integer -> a  
+
+  times  x 0 =  zero
+  times  x n =  add x (times x (n-1)) 
+--------------------------------------------------------------
+
+means that the category AddMonoid is declared to be an  extension
+of the  Set  category.  It  inherits  by default the operations
+from Set and has additional operations.
+
+This last class declaration has also the  implementation part  for
+`times'.  This means that if we define an  instance  of the 
+AddMonoid category for the domain  a,  and supply the implemention
+part for  zero, add,  then the definition for `times' will be
+formed automatically, according to the general declaration from
+AddMonoid category.
+
+And so on.
+
+From the programmer point of view, implementing of the computer 
+algebra in DoCon means providing each of the choosen constructors
+with appropriate  instances  of classes (categories).
+
+Example.
+The script like
+
+------------------------------------------------------------------
+instance  CommutativeRing a => AddGroup (Pol a)   where
+
+  zero = Pol []
+
+  add  (Pol [])         g                =  g
+  add  f                (Pol [])         =  f
+  add  (Pol monomialsF) (Pol monomialsG) =  
+     let
+       (a,expF) = head monomialsF   
+       (b,expG) = head monomialsG  
+     in
+       case  compare expF expG  of   LT ->  ...
+                                     GT -> 
+                                     EQ ->  add coefficients ...
+       ....
+-----------------------------------------------------------------
+
+expresses the operations  zero, add, neg  for the category of the
+(commutative) additive group  for  polynomials  through the 
+category operations  zero, add, neg, mul  of commutative ring for 
+the coefficients.
+This instanace declaration means "if the coefficient domain  a  is 
+of the CommutativeRing category, then  (Pol a)  is of the AddGroup
+category, and the operations are defined as follows ...".
+Thus the name Pol stands also for  this  way to define an 
+operatons. To change the meaning of  zero, add etc.  we need other
+constructor, say  (Pol_alternative a).
+
+Further, the script
+
+------------------------------------------------------------------
+instance  CommutativeRing a => MulSemigroup (Pol a)   where
+
+  mul  f g = ...
+  ...
+------------------------------------------------------------------
+ 
+means that the structure  MulSemigroup  on  (Pol a)  joins the one 
+of  AddGroup - under the same condition.
+
+Then as  (Pol a)  became AddGroup and MulSemigroup, it occures
+automatically to be  Ring -  because the latter is declared
+separately:
+
+class  (AddGroup a, MulSemigroup a) =>  Ring a
+
+as a part of the general category hierarchy definition.
+
+
+
+
+1.4.3. Properties
+
+
+DoCon operates also with the properties of the algebraic domains,
+such as "commutative", "Euclidean", "factorial", "hasZeroDivisor",
+etc.
+
+It is arranged so for the following reasons.
+
+
+(1) Property evaluation is as important task in science as the 
+    evaluations of the domain elements (matrices, polynomaials 
+    etc.).
+
+(2) Such Haskell declarations as
+
+    class  Set a =>  AddMonoid a   where    
+      zero  :: a
+      add   :: a -> a -> a
+      times :: a -> Integer -> a  
+
+      times  x 0 =  zero
+      times  x n =  add x (times x (n-1)) 
+
+    cannot express presizely the nowtion of monoid in algebra, 
+    because, in the latter implies that these operations satisfy 
+    certain properties, say 
+                (add zero x)      == x, 
+                (add (add x y) z) == (add x (add y z)).
+
+(3) Processing properties enables us to simplify the category 
+    tower.
+    In real algebra, we should declare such categories as
+    Set, OrederedSet, AddSemigroup, AddMonoid, AddGroup,
+    OrderedAddGroup, OrderedAddGroup_with_this_and_that ...
+
+    The nubmer of the steps in this tower can be deminished using
+    the properties.
+
+
+Concering (2).
+Many of these property requirements only accompany the script
+as a  comments  - to prevent the user (or developer) from building 
+of the mathematically incorrect instances.
+
+But often we can derive these property values automatically,
+following the  construction  of the domain, the properties of the 
+parent domains, and using certain restriced set of axioms.
+Axioms are simple, like  field => Euclidean,
+Euclidean => (not hasZeroDivisor),  etc.
+                           
+Concering (3).
+For example, we supply the  AddSemigroup  category not only
+with the `add' operation but also with  `zero_l', `neg_l'  ones.
+zero_l  distincts from zero in that it returns [] if the domain
+has not zero (this may well occure with a semigroup).
+Also the properties  hasZero, isAddGroup  are declared as a 
+members of the class AddSemigroup.
+Thus if for the semigroup  a  isAddGroup==Yes,  then   a  is 
+actually a group.
+Any function that deals with the elements of  a  can test
+isAddGroup  and define which way to compute. 
+
+
+
+1.4.4. Constants as class operations
+
+The Haskell type system makes it desirable to represent the 
+constants as  zero, unity, cardinality, etc.  as a constant 
+functions of one argument.
+Say,       
+
+... AddMonoid a  where     zero :: a -> a 
+
+In the program, we set  (zero x)  minding that this yeilds the 
+same value for any  x  from  a.
+
+Further, the properties of a domain are mathematically the 
+constants related to domains.  
+But we declare them as the functions of the element of a domain.
+Thus to set  (isAddGroup x)==Yes  in the program means to test
+where the semigroup  a  to which  x  belongs  is an additive 
+group. 
+This is correct because any data element in Haskell belongs to
+the  unique  type and because we define the property as a 
+constant function.
+We cannot script  f(a)  for the domain (type)  a  in Haskell.
+Instead we put    f(x)  where  x  is a variable of type  a.
+
+
+
+1.4.5. Domain description term
+
+Each category supplies the constant function of the domain
+construction term.
+It is not clear so far how useful this will appear; it is an 
+experimental feature. 
+
+The processing of the properties and construction terms is rather 
+olny declared at the current stage of the project.  The real 
+handling will be developed within an year.
+
+There is also certain point about the property inference.
+
+Example.
+Consider the script for the determinant:
+
+det ::  CommutativeRing a =>  Matrix a -> a
+
+det  m = if  (field (matrixElement m))==Yes  then  by_Gauss m
+         else                                      expandByRow m
+           where
+           by_Gauss m = 
+           ...
+           expandByRow m = ...
+
+
+This construction enables DoCon to choose an appropriate way to
+compute `det'.
+Suppose, for example, that  a  is the residues of Integer modulo 5.
+I this case, DoCon derives automatically  (field a)==Yes  (the 
+programmer may be lazy to keep this in mind) and chooses the Gauss 
+reduction for `det'.
+
+But this inference occures each time when `det' is called for any
+matrix over  a.  
+Looks like it is worth to introduce more general formats, as 
+
+det :: CommutativeRing a =>  String -> Matrix a -> a
+
+det  modes m =  ...
+
+
+Here the string  modes  may contain an explicite property values
+(say, "f0e1"  means  field==No, euclidean==Yes).  And if it does
+not, then DoCon tries to derive them.
+
+
+1.4.6. Types and domains
+
+
+To be rigorous, a type it not a domain:
+
+1:%0     belongs to the type Rational,  but does not belong to the 
+         domain of rationals numbers,
+
+(Pol [x^2,x]), (Pol [x,x^2]) 
+                   are of type  (Pol Integer),  but the second one 
+                   does not belong to Polynomials over Integer.
+
+We should keep this consideration in  mind,  for  DoCon  does  not
+point this explicitely.
+
+
+
+1.4.7. Equality treating
+
+
+Standard `==' function is treated  *algebraically*,  not 
+syntactically.
+This is very important.  
+Very often DoCon *reject deriving* the Eq class.
+
+Thus for the Fraction it puts   (n:/m)==(n1:/d1) =  n*d1 = n1*d
+
+If we define then         num (n:/d) =  n
+
+for the numerator, we obtain that 
+                f==g  does not imply  (num f)==(num g),        (*)
+
+and the programmer should take care not to use the property (*) in
+her script !
+
+Pay attention to this feature.
+
+
+
+1.4.8. Multiple parameters.
+
+
+Haskell has difficulties with the representing such categories as
+
+class  (AddGroup a, Field k) =>  VectorSpace a k
+
+because it cannot treat classes with the multiple type parameters.
+
+Thus the  ModuleOver  category we represent via the direct product
+of rings - so far - see the module  Categ.hs.
+
+May be, the *constructor classes* of Haskell 1.3  will help to do
+this in a more elegant fascion.
+
+We will look for various solutions.
+
+And the advices are welcomed too !
+
+
+
+1.4.9. Reading-writing
+
+
+Read-write  converts between the domain element and the String.
+
+DoCon  ignores the prelude functions   read, write    and supplies
+its own  `fromExpr', `w'  instead, treating them as the operations 
+of the Set category.
+
+
+`w'  is very likely to Prelude `shows'.
+
+
+Reading (parsing) is done in some original way.
+It is split into two remarkable functions:
+                     infixParse  and  fromExpr
+
+infixParse  
+takes a string and produces the syntactic tree - Expression. 
+At this stage, the infix operations, as "+","*", and others, have 
+no other sense than that their singatures.
+
+fromExpr  
+gives an interpretation to the Expression - according to the 
+sample element of the domain.
+This is an *operation* of the Set class.  That is, it should be 
+programmed for each specified domain of the Set category.
+
+The general reading `r' is the composition of  lexLots, infixParse 
+and fromExpr.
+
+Example.
+
+s =  " (1+2, 1 ) "      --(infix.lexLots)-->
+
+(E "," (E "+" "1" "2") "1")  =  e   :: Expression String
+
+(fromExpr ((1,1)::(Integer,Integer))  e)  -->  (3,1)
+
+
+Further, the sample  (1%1,1)::(Rational,Integer)  would produce the 
+parsing  (3:%1, 1)  for the same string.
+
+Very naturally, fromExpr can be written recursively, by the type
+construction.
+
+More example:
+for the var-polynomial, the sample element contains also the list
+of variables, these variables are recognized in the Expression by 
+the  fromExpr  function.
+(Also `w' uses this variables to display the polynomial).
+
+See  Categ.hs (class Set),      parse/princip.txt,   IParse.hs,
+     Generic.hs (function `r'),  Main.hs.
+
+
+
+
+1.4.10. Dialogue mode
+
+
+So far DoCon runs only in the *batch* mode: 
+
+                  edit  Main.hs,  
+                  re-compile (to  .o  file !),  
+                  re-link  
+                  and  re-run.
+
+Main.hs  contains the desired computational experiment.
+
+We hope that the true *dialogue* mode will be available when we
+get the *interpreter* of the Haskell kernel language.
+They say, the Chalmers Haskell supplies this. But maybe something
+will be possible in Glasgow too.
+You see, this feature depends on implementation.
+
+
+1.5. Deficiences
+
+
+On January 1, 1996, ...
+
+
+
+
+
+
+
+
+
+
+                          References
+
+1. Jenks R.D., Sutor R.S., et al.
+   AXIOM, the Scientific Computation System.
+   Springer-Verlag, New-York-Heidelberg-Berlin (1992).
+
+2. Meshveliani S.D.  
+   The Algebraic Constructor CAC: computing in construction-defined
+   domains.
+   Proceedings of DISCO-93,  Lecture Notes in Computer Science, 722.
+
+3. Report on the Programming Language Haskell, version 1.2.
+   The text file is available freely by ftp from 
+   ftp.dcs.glasgow.ac.uk:  /pub/haskell/glasgow   
+
+4. Turner D. 
+   An Overview of Miranda,
+   SIGPLAN Notices, vol 21, no 12 (December 1986).

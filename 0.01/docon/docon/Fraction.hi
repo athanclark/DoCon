@@ -1,0 +1,29 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface Fraction where
+import Categ(AddSemigroup, MulSemigroup, Set)
+import Categ1(AddGroup, AddMonoid, CommutativeRing, Field, MulMonoid, OrdAddGroup, OrdAddMonoid, Ring, SyzygySolvableRing)
+infixl 7 :/
+data Fraction a   = (:/) a a
+canFr :: SyzygySolvableRing a => [Char] -> Fraction a -> Fraction a
+denom :: Fraction a -> a
+num :: Fraction a -> a
+unityFr :: Ring a => a -> Fraction a
+zeroFr :: Ring a => a -> Fraction a
+instance (SyzygySolvableRing a, Fractional a) => AddSemigroup (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => MulSemigroup (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => Set (Fraction a)
+instance (SyzygySolvableRing a, Num a, Fractional a) => AddGroup (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => AddMonoid (Fraction a)
+instance (SyzygySolvableRing a, Num a, Fractional a) => CommutativeRing (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => Field (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => MulMonoid (Fraction a)
+instance (SyzygySolvableRing a, OrdAddMonoid a, Fractional a) => OrdAddGroup (Fraction a)
+instance (SyzygySolvableRing a, OrdAddMonoid a, Fractional a) => OrdAddMonoid (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => Ring (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => SyzygySolvableRing (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => Eq (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => Fractional (Fraction a)
+instance (SyzygySolvableRing a, Fractional a) => Num (Fraction a)
+instance (SyzygySolvableRing a, OrdAddMonoid a, Fractional a) => Ord (Fraction a)
+instance Text a => Text (Fraction a)
+

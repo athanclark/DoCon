@@ -1,0 +1,6 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface RelBas where
+import Categ1(SyzygySolvableRing)
+import Pol(Pol)
+polRelBasis_euc :: (SyzygySolvableRing a, Num a) => [Char] -> [Pol a] -> [[Pol a]]
+

@@ -1,0 +1,23 @@
+{-# GHC_PRAGMA INTERFACE VERSION 4 #-}
+interface ConeEqu where
+import Pol(Pol)
+import PreludeRatio(Ratio(..))
+import VarPol(VarPol)
+type A = VarPol (Ratio Integer)
+type K = Ratio Integer
+basis :: [VarPol (Ratio Integer)]
+check :: [VarPol (Ratio Integer)]
+f1 :: VarPol (Ratio Integer)
+f2 :: VarPol (Ratio Integer)
+f3 :: VarPol (Ratio Integer)
+gb :: [VarPol (Ratio Integer)]
+n2 :: VarPol (Ratio Integer)
+u :: VarPol (Ratio Integer)
+un :: VarPol (Ratio Integer)
+unp :: Pol (Ratio Integer)
+v :: VarPol (Ratio Integer)
+vars :: [[Char]]
+x :: VarPol (Ratio Integer)
+y :: VarPol (Ratio Integer)
+z :: VarPol (Ratio Integer)
+

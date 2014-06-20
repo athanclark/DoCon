@@ -1,0 +1,7 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface ToDiag where
+import Categ1(SyzygySolvableRing)
+import Matrix(Matrix)
+test_toDiagMatr :: SyzygySolvableRing a => Matrix a -> [Char]
+toDiagMatr :: SyzygySolvableRing a => [Char] -> Matrix a -> Matrix a -> Matrix a -> (Matrix a, Matrix a, Matrix a)
+

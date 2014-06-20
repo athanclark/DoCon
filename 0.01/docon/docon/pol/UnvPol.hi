@@ -1,0 +1,26 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface UnvPol where
+import Categ(AddSemigroup, Comp, Set)
+import Categ1(AddMonoid, CommutativeRing, Ring)
+import Pol(Pol)
+type Mon1 a = (a, Integer)
+data Pol1 a   = Pol1 [(a, Integer)]
+cPol1Mul :: Ring a => a -> Pol1 a -> Pol1 a
+deg :: Pol1 a -> Integer
+lc1 :: Pol1 a -> a
+mPol1Mul :: Ring a => (a, Integer) -> Pol1 a -> Pol1 a
+mon1Mul :: Ring a => a -> (a, Integer) -> (a, Integer) -> [(a, Integer)]
+pol1Add :: CommutativeRing a => Pol1 a -> Pol1 a -> Pol1 a
+pol1CoefDiv :: Ring a => Pol1 a -> a -> [Pol1 a]
+pol1DivRem :: CommutativeRing a => Pol1 a -> Pol1 a -> (Pol1 a, Pol1 a)
+pol1Mul :: CommutativeRing a => Pol1 a -> Pol1 a -> Pol1 a
+pol1Neg :: AddSemigroup a => Pol1 a -> Pol1 a
+pol1Sub :: CommutativeRing a => Pol1 a -> Pol1 a -> Pol1 a
+pol1Times :: Ring a => Pol1 a -> Integer -> Pol1 a
+pol1ToPol :: ([Integer] -> [Integer] -> Comp) -> Pol1 a -> Pol a
+pol1ToVector :: Set a => a -> Integer -> Pol1 a -> [a]
+polToPol1 :: CommutativeRing a => Pol a -> Pol1 a
+vectorToPol1 :: AddMonoid a => [a] -> Pol1 a
+instance Eq a => Eq (Pol1 a)
+instance Text a => Text (Pol1 a)
+

@@ -1,0 +1,99 @@
+module Main where
+
+import qualified Data.Map as Map (empty)
+import Maybe (fromJust)
+import DExport
+
+
+main = let n = 10^11
+           f = -- isPrime
+               isPrimeInt
+       in   
+       putStr $ shows (firstPrimeAfter f n) "\n"
+
+firstPrimeAfter :: (Natural -> Bool) -> Natural -> Natural 
+firstPrimeAfter    isP                  n = 
+                                   fromJust $ find isP [(succ n) ..]  
+
+
+isPrimeInt :: Integer -> Bool
+--
+-- Method by  Agrawal and Kayal and Saxena.
+
+-- ******
+-- I failed to find  n  on which ts is faster than the  
+-- Pomeranz  method program  (DExport.isPrime).
+
+-- Review this !
+-- ******
+
+
+type ResZ = ResidueE Integer   -- local
+type PP   = UPol (UPol ResZ)   --
+
+isPrimeInt n = if  abs n < 2  then  False 
+               else                 isPrimeNat $ abs n 
+  where
+  squareRoot n =  succ $ fst $ rootOfNatural 2 n n
+
+  isPrimeNat n =   -- here  n > 1
+    case 
+        minRootOfNatural n  
+    of
+    Just _  -> False
+    Nothing ->
+      (if  
+         any (\ a -> let g = gcd a n  in  1 < g && g < n) [2 .. r]
+       then
+            False
+       else
+       if  n <= r  then  True
+       else
+       if  any (not . isZeroValueAt_a)
+                          [1 .. (log_n * (squareRoot $ totient r))]
+       then  False
+       else  True
+      )
+      where
+      log_n = succ $ logInt 2 n
+      r     = fromJust $ find (\ k -> gcd k n == 1  &&
+                                    (orderModuloNatural k n > log_n)
+                              ) [2 ..]
+
+      -- Let  R = Z/(n)  (type ResZ),   P = R[x]  (type UPol ResZ),
+      --      RP = P/(x^r - 1),         k_n = image of k in Z/(n).
+
+      isZeroValueAt_a a =  f1 == f2   
+        where
+        -- This is equality in  RP  for
+        -- f1 = x^n + a   =RP=  x^(n_r) + a_n
+        -- f2 = (x+a)^n   =RP=  (x + a_n)^n
+
+        aP = ctr unP $ ctr unR a    -- image of a in P 
+        f1 = xPower_nRem + aP       -- x^n + a  in  P, mod (x^r -1) 
+        f2 = powerPMod r (x + aP) n  
+                                     -- (x+a)^n  in  P, mod (x^r -1) 
+
+      nI  = eucIdeal "" n [] [] []   -- prepare  R = Z/(n), P = R[x]
+      unR = Rse 1 nI dZ
+      dR  = upRing unR Map.empty
+      unP = cToUPol "x" dR unR    :: UPol ResZ   -- 1 of P
+      x   = varP unR unP                         -- x in P
+      xPower_nRem = power x (rem n r)            -- x^(n mod r)
+
+      powerPMod :: Natural -> UPol ResZ -> Natural -> UPol ResZ 
+      powerPMod    r          f            n
+        
+                     -- binary method to power in P modulo (x^r - 1)
+        | n == 1    = f
+        | n == 0    = unity f
+        | otherwise = let  h = powerPMod r f (quot n 2)
+                      in
+                      if even n then  modXr1 r (h*h)
+                      else            modXr1 r ((modXr1 r (h*h))* f)
+
+      modXr1 r f =                          -- f mod (x^r - 1)  in P
+             case  upolMons f
+             of
+             []        -> f
+             (c, e): _ -> (ct f (c, rem e r)) + (modXr1 r $ pTail f)

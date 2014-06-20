@@ -1,0 +1,5 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface ParOpTab where
+opTable :: [([Char], ([(Int, Int, Int, Int)], [(Int, Int, Int, Int)], [(Int, Int, Int, Int)]))]
+parenTable :: [([Char], [Char])]
+

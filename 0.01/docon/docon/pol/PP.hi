@@ -1,0 +1,28 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface PP where
+import Categ(AddSemigroup, Comp, Set)
+import Categ1(AddGroup, AddMonoid, OrdAddGroup, OrdAddMonoid)
+data PP   = PP [Integer] ([Integer] -> [Integer] -> Comp)
+type PPComp = [Integer] -> [Integer] -> Comp
+addL :: AddMonoid a => [a] -> [a] -> [a]
+degLex :: [Integer] -> [Integer] -> Comp
+degRevLex :: [Integer] -> [Integer] -> Comp
+lexComp :: [Integer] -> [Integer] -> Comp
+ppCompl :: (AddGroup a, Num a, Ord a) => [a] -> [a] -> [a]
+ppCp :: PP -> [Integer] -> [Integer] -> Comp
+ppDivides :: [Integer] -> [Integer] -> Bool
+ppLcm :: Ord a => [a] -> [a] -> [a]
+ppMutPrime :: AddMonoid a => [a] -> [a] -> Bool
+ppP :: PP -> [Integer]
+revLex :: [Integer] -> [Integer] -> Comp
+instance AddSemigroup PP
+instance Set PP
+instance AddGroup PP
+instance AddMonoid PP
+instance OrdAddGroup PP
+instance OrdAddMonoid PP
+instance Eq PP
+instance Num PP
+instance Ord PP
+instance Text PP
+

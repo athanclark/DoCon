@@ -1,0 +1,16 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface PreludeChar where
+import Categ(Comp, DomCons, PropValue, Set(..), Tree)
+import IParse(Expression)
+import Matrix(Matrix)
+class (Eq a, Text a) => Set a where
+	setTerm :: a -> ([Char], DomCons, [([Char], PropValue)], [[Char]], Tree [Char])
+	card :: a -> [[Integer]]
+	w :: a -> [Char] -> [Char]
+	fromExpr :: a -> Expression [Char] -> ([a], [Char])
+instance Set Comp
+instance Set PropValue
+instance Set Char
+instance Set a => Set (Matrix a)
+instance Set a => Set [a]
+

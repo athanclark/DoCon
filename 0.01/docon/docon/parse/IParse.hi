@@ -1,0 +1,16 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface IParse where
+data Expression a   = L a | E (Expression a) [Expression a] [Expression a]
+type OpDescr = (Int, Int, Int, Int)
+type OpGroupDescr a = (a, ([(Int, Int, Int, Int)], [(Int, Int, Int, Int)], [(Int, Int, Int, Int)]))
+type OpTable a = [(a, ([(Int, Int, Int, Int)], [(Int, Int, Int, Int)], [(Int, Int, Int, Int)]))]
+type ParenTable a = [(a, a)]
+data State   = NoArg | WasArg
+getOp :: Eq a => a -> [(a, ([(Int, Int, Int, Int)], [(Int, Int, Int, Int)], [(Int, Int, Int, Int)]))] -> [(a, ([(Int, Int, Int, Int)], [(Int, Int, Int, Int)], [(Int, Int, Int, Int)]))]
+getParen :: Eq a => a -> [(a, a)] -> [a]
+infixParse :: (Eq a, Text a) => [(a, a)] -> [(a, ([(Int, Int, Int, Int)], [(Int, Int, Int, Int)], [(Int, Int, Int, Int)]))] -> [Expression a] -> ([Expression a], [Char])
+lexLots :: [Char] -> [Expression [Char]]
+showsExpr :: Text a => Expression a -> [Char] -> [Char]
+instance Eq a => Eq (Expression a)
+instance Text a => Text (Expression a)
+

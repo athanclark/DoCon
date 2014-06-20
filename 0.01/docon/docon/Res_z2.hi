@@ -1,0 +1,18 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface Res_z2 where
+import Categ(AddSemigroup, MulSemigroup, Set)
+import Categ1(AddGroup, AddMonoid, CommutativeRing, Ring, SyzygySolvableRing)
+data ResZ2   = Z20 | Z21
+instance AddSemigroup ResZ2
+instance MulSemigroup ResZ2
+instance Set ResZ2
+instance AddGroup ResZ2
+instance AddMonoid ResZ2
+instance CommutativeRing ResZ2
+instance Ring ResZ2
+instance SyzygySolvableRing ResZ2
+instance Eq ResZ2
+instance Fractional ResZ2
+instance Num ResZ2
+instance Text ResZ2
+

@@ -1,0 +1,8 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface ExprPol where
+import Categ(Comp)
+import Categ1(CommutativeRing)
+import IParse(Expression)
+import Pol(Pol)
+exprToPol :: CommutativeRing a => [[Char]] -> a -> a -> ([Integer] -> [Integer] -> Comp) -> Expression [Char] -> ([Pol a], [Char])
+

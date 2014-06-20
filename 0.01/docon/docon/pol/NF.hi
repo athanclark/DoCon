@@ -1,0 +1,8 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface NF where
+import Categ1(SyzygySolvableRing)
+import Pol(Pol)
+initVectors :: b -> b -> [a] -> [(a, [b])]
+polNF :: SyzygySolvableRing a => [Char] -> [Pol a] -> Pol a -> (Pol a, [Pol a])
+polNF_v :: SyzygySolvableRing a => [Char] -> [(Pol a, [Pol a])] -> (Pol a, [Pol a]) -> (Pol a, [Pol a])
+

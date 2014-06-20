@@ -1,0 +1,7 @@
+{-# GHC_PRAGMA INTERFACE VERSION 5 #-}
+interface GrBas where
+import Categ1(SyzygySolvableRing)
+import Matrix(Matrix)
+import Pol(Pol)
+grBas :: (SyzygySolvableRing a, Num a) => [Char] -> [Char] -> [Pol a] -> ([Pol a], Matrix (Pol a))
+
